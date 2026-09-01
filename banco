@@ -1,0 +1,108 @@
+CREATE DATABASE rental_db;
+
+USE rental_db;
+
+CREATE TABLE usuarios (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    senha VARCHAR(100) NOT NULL
+);
+
+INSERT INTO usuarios (nome, email, senha) VALUES
+('Administrador', 'admin@email.com', '1234'),
+('João Silva', 'joao@email.com', '1234'),
+('Maria Souza', 'maria@email.com', '1234');
+
+CREATE TABLE equipamentos (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    marca VARCHAR(50),
+    modelo VARCHAR(50),
+    categoria VARCHAR(50) NOT NULL,
+    potencia VARCHAR(30),
+    material VARCHAR(50),
+    peso DECIMAL(8,2),
+    dimensoes VARCHAR(50),
+    cor VARCHAR(30),
+    quantidade INT NOT NULL,
+    estoque_minimo INT NOT NULL
+);
+
+INSERT INTO equipamentos
+(nome, marca, modelo, categoria, potencia, material, peso, dimensoes, cor, quantidade, estoque_minimo)
+VALUES
+
+('Projetor Epson PowerLite X49',
+ 'Epson',
+ 'PowerLite X49',
+ 'Projetor',
+ '3600 Lumens',
+ NULL,
+ 2.70,
+ '302x237x87 mm',
+ 'Branco',
+ 8,
+ 2),
+
+('Caixa de Som JBL PartyBox 710',
+ 'JBL',
+ 'PartyBox 710',
+ 'Caixa de Som',
+ '800W',
+ 'Plástico',
+ 27.00,
+ '399x905x436 mm',
+ 'Preto',
+ 6,
+ 2),
+
+('Microfone Shure SM58',
+ 'Shure',
+ 'SM58',
+ 'Microfone',
+ 'Dinâmico',
+ 'Metal',
+ 0.30,
+ '162x51x51 mm',
+ 'Preto',
+ 15,
+ 5);
+
+CREATE TABLE movimentacoes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    equipamento_id INT NOT NULL,
+    usuario_id INT NOT NULL,
+    tipo VARCHAR(10) NOT NULL,
+    quantidade INT NOT NULL,
+    data_movimentacao DATE NOT NULL,
+
+    FOREIGN KEY (equipamento_id)
+        REFERENCES equipamentos(id),
+
+    FOREIGN KEY (usuario_id)
+        REFERENCES usuarios(id)
+);
+
+INSERT INTO movimentacoes
+(equipamento_id, usuario_id, tipo, quantidade, data_movimentacao)
+VALUES
+
+(1, 1, 'ENTRADA', 3, '2026-08-20'),
+
+(2, 2, 'SAIDA', 2, '2026-08-21'),
+
+(3, 3, 'SAIDA', 5, '2026-08-22');
+
+SELECT
+    m.id,
+    u.nome AS usuario,
+    e.nome AS equipamento,
+    m.tipo,
+    m.quantidade,
+    m.data_movimentacao
+FROM movimentacoes m
+JOIN usuarios u
+    ON m.usuario_id = u.id
+JOIN equipamentos e
+    ON m.equipamento_id = e.id;
